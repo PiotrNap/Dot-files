@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =5
+let g:netrw_dirhist_5='/Users/piotr.napierala/.config/nvim'
+let g:netrw_dirhist_4='/Users/piotr.napierala/Projects/orakel_configurator'
+let g:netrw_dirhist_3='/Users/piotr.napierala/.config/nvim'
+let g:netrw_dirhist_2='/Users/piotr.napierala/Projects/orakel_frontend/locales'
+let g:netrw_dirhist_1='/Users/piotr.napierala/Projects/orakel_frontend'
+let g:netrw_dirhist_0='/Users/piotr.napierala/Projects/orakel_frontend/lib'
+let g:netrw_dirhist_9='/Users/piotr.napierala/Projects/orakel_frontend/lib/Product'
+let g:netrw_dirhist_8='/Users/piotr.napierala/Projects/orakel_frontend/lib/Product/Factory'
+let g:netrw_dirhist_7='/Users/piotr.napierala/Projects/orakel_frontend/pages/search'
+let g:netrw_dirhist_6='/Users/piotr.napierala/Projects/orakel_frontend/pages'
