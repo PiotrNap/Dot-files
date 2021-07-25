@@ -8,6 +8,7 @@ set tabstop=4 softtabstop=4 shiftwidth=4 scrolloff=8 scl=yes guicursor=
 set undodir=~/.vim/undodir
 set cot=menuone,noinsert,noselect
 set encoding=utf-8
+set background=dark
 
 " Give more space for displaying messages.
 set cmdheight=2
@@ -68,7 +69,7 @@ let g:gruvbox_italicize_strings = 1
 let g:gruvbox_plugin_hi_groups = 1
 
 fun! ColorMyPencils()
-   color gruvbox8
+   color gruvbox8_hard
    if exists('+termguicolors')
         let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
         let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
@@ -82,6 +83,16 @@ fun! ColorMyPencils()
   highlight qfFileName guifg=#aed75f
 endfun
 call ColorMyPencils()
+
+" yank text into system (and host?) clipboard
+fun! Yank(text) 
+    let escape = system("term_copy",a:text)
+    if v:shell_error
+        echoerr escape
+    else
+        call writefile([escape], '/dev/tty', 'b')
+    endif
+endfun
 
 
 if executable('rg')
@@ -131,6 +142,8 @@ fun! GotoWindow(id)
 endfun
 
 nnoremap <leader>m :MaximizerToggle!<CR>
+
+nnoremap <leader>y y:call Yank(@0)
 
 "vim-fugitive shortcuts
 nnoremap <leader>gs :G<CR>
