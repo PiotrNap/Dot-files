@@ -190,11 +190,24 @@ nnoremap <leader>cpf :let @" = expand("%")<CR>
 
 " greatest remap ever
 vnoremap <leader>p "_dP
-
-" next greatest remap ever : asbjornHaland
 nnoremap <leader>y "+y
 vnoremap <leader>y "+y
-nnoremap <leader>Y gg"+yG
+nnoremap <leader>V v$
+" go to next occurence and center the cursor
+nnoremap n nzzzv
+nnoremap N nzzzv
+" join the line but remain position of the cursor
+nnoremap J mzJ`z
+" add breakpoints for undo command
+inoremap , ,<c-g>u
+inoremap . .<c-g>u
+inoremap ! !<c-g>u
+inoremap ? ?<c-g>u
+inoremap [ [<c-g>u
+" populate the jump line with 5 or more lines
+nnoremap <expr>k (v:count > 5 ? "m'" . v:count : "") . 'k'
+nnoremap <expr>j (v:count > 5 ? "m'" . v:count : "") . 'j'
+
 
 " rename current open file 
 nnoremap <leader>rn :!mv % %:h/
