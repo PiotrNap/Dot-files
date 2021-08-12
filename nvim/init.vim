@@ -47,8 +47,7 @@ Plug 'romainl/vim-cool'
 Plug 'prettier/vim-prettier'
 Plug 'hoob3rt/lualine.nvim'
 Plug 'tpope/vim-commentary'
-" Plug 'ThePrimeagen/git-worktree.nvim'
-" Plug 'rstacruz/vim-closer'
+Plug 'tpope/vim-vinegar'
 
 " telescope requirements...
 Plug 'nvim-lua/popup.nvim'
@@ -67,6 +66,9 @@ lua require('telescope').setup({defaults = {file_sorter = require('telescope.sor
 
 let g:gruvbox_italicize_strings = 1
 let g:gruvbox_plugin_hi_groups = 1
+
+" Initialize netrw with hidden dot files
+let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
 
 fun! ColorMyPencils()
    color gruvbox8_hard
