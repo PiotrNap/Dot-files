@@ -31,8 +31,6 @@ Plug 'tjdevries/nlua.nvim'
 Plug 'tjdevries/lsp_extensions.nvim'
 Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 
-" Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
 "Neovim Tree Sitter
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/playground'
@@ -58,17 +56,12 @@ Plug 'nvim-telescope/telescope-fzy-native.nvim'
 call plug#end()
 
 lua require('myLuaSetup')
-lua require('lualine').setup()
-
 " lua require'nvim-treesitter.configs'.setup { highlight = { enable = true } }
-lua require('telescope').setup({defaults = {file_sorter = require('telescope.sorters').get_fzy_sorter}})
 
 
 let g:gruvbox_italicize_strings = 1
 let g:gruvbox_plugin_hi_groups = 1
 
-" Initialize netrw with hidden dot files
-let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
 
 fun! ColorMyPencils()
    color gruvbox8_hard
@@ -109,16 +102,14 @@ let g:prettier#config#tab_width = 2
 let laoded_matchparen = 1
 let mapleader = " "
 
+" Initialize netrw with hidden dot files
+let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
+" Start with the type of nodes listing
+let g:netrw_liststyle = 0
 let g:netrw_browse_split = 2
 let g:netrw_banner = 0
 let g:netrw_winsize = 25
 let g:netrw_localrmdir='rm -r'
-
-let g:lualine= {
-    \ 'options' : {
-    \ 'theme' :  'gruvbox',
-    \ }
-    \}
 
 
 " For scrolling in autocompletion popup
@@ -197,7 +188,7 @@ vnoremap <leader>y "+y
 nnoremap <leader>V v$
 " go to next occurence and center the cursor
 nnoremap n nzzzv
-nnoremap N nzzzv
+nnoremap N Nzzzv
 " join the line but remain position of the cursor
 nnoremap J mzJ`z
 " add breakpoints for undo command

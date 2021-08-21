@@ -1,30 +1,25 @@
 # If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
+# export PATH=$HOME/Users/piotrnapierala/Bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/Users/piotr.napierala/.oh-my-zsh"
-
-# The default editor for react
-export REACT_EDITOR=neovim
-
-# Default browser for development
-export BROWSER=brave
-
-# nvm
-export NVM_DIR=~/.nvm
-source $(brew --prefix nvm)/nvm.sh
-
-# Android sdk
-export ANDROID_SDK=/Users/piotr.napierala/Library/Android/sdk
+export ZSH="/Users/piotrnapierala/.oh-my-zsh"
 
 export DEFAULT_USER="$(whoami)"
 export PATH="$HOME/homebrew/bin:$PATH"
+export PATH="/sbin:$PATH"
 export PATH="$HOME/.local/bin:$PATH"
-export PATH=$HOME/Users/piotr.napierala/Library/Android/sdk/platform-tools:$PATH
-#export PATH="/bin:/usr/bin:/usr/local/bin:/Users/piotr.napierala/.local/bin"
+export PATH="/bin:/usr/bin:/usr/local/bin:${PATH}"
 
-# Daedalus socket path
-export CARDANO_NODE_SOCKET_PATH=$(ps ax | grep -v grep | grep cardano-wallet | grep testnet | sed -r 's/(.*)node-socket //')
+####
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+export NVM_DIR="$HOME/.nvm"
+  [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+  [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
 
 # RPROMPT="%F{111}%K{000}[%D{%f/%m/%y}|%@]"
 
@@ -131,7 +126,9 @@ test -f $HOME/.bash_aliases && . $HOME/.bash_aliases
 alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-
 ZSH_THEME="gruvbox"
 SOLARIZED_THEME="dark"
-[ -f "/Users/piotr.napierala/.ghcup/env" ] && source "/Users/piotr.napierala/.ghcup/env" # ghcup-env
+
+# kitty
+bindkey "\e[1;3D" backward-word # ⌥←
+bindkey "\e[1;3C" forward-word # ⌥→
