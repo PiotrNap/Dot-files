@@ -1,0 +1,6 @@
+-- require('lualine').setup({
+--     options = {
+--         theme = '16color',
+--         icons_enabled = false
+--     }
+-- })

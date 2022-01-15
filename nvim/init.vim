@@ -32,20 +32,26 @@ Plug 'tjdevries/lsp_extensions.nvim'
 Plug 'jose-elias-alvarez/nvim-lsp-ts-utils'
 
 "Neovim Tree Sitter
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'nvim-treesitter/playground'
+" Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+" Plug 'nvim-treesitter/playground'
 
 Plug 'szw/vim-maximizer'
 Plug 'tpope/vim-fugitive'
 Plug 'vim-utils/vim-man'
 Plug 'mbbill/undotree'
-Plug 'lifepillar/vim-gruvbox8'
 Plug 'tweekmonster/startuptime.vim'
 Plug 'romainl/vim-cool'
 Plug 'prettier/vim-prettier'
-Plug 'hoob3rt/lualine.nvim'
+" Plug 'shadmansaleh/lualine.nvim'
+
+" Snippets plugins
+" Plug 'honza/vim-snippets'
+" Plug 'SirVer/ultisnips'
+
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-vinegar'
+" Plug 'tpenguinltg/vim-closing-brackets'
+" Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 
 " telescope requirements...
 Plug 'nvim-lua/popup.nvim'
@@ -53,31 +59,47 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
 
+" Give me some more colors!
+" Plug 'fxn/vim-monochrome'
+" Plug 'pbrisbin/vim-colors-off'
+" Plug 'lifepillar/vim-gruvbox8'
+" Or not ...
+Plug 'Lokaltog/vim-monotone'
+
+" Haskell / GHCi
+Plug 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim' }
+
 call plug#end()
 
 lua require('myLuaSetup')
-" lua require'nvim-treesitter.configs'.setup { highlight = { enable = true } }
-
-
-let g:gruvbox_italicize_strings = 1
-let g:gruvbox_plugin_hi_groups = 1
-
 
 fun! ColorMyPencils()
-   color gruvbox8_hard
+   color monotone
    if exists('+termguicolors')
         let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
         let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
     endif
-    let g:gruvbox_invert_selection='0'
 
   highlight ColorColumn ctermbg=0 guibg=grey
-  highlight Normal guibg=none
+  highlight Normal guibg=000000
   highlight LineNr guifg=#5eacd3
   highlight netrwDir guifg=#5eacd3
   highlight qfFileName guifg=#aed75f
+
+  " make background transparent
+  highlight Normal ctermbg=NONE guibg=NONE
 endfun
 call ColorMyPencils()
+
+" fun! SetTransparentBg()
+"    if exists('+termguicolors')
+"         let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+"         let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+"     endif
+
+"     color monotone
+" endfun
+" call SetTransparentBg()
 
 " yank text into system (and host?) clipboard
 fun! Yank(text) 
@@ -94,6 +116,16 @@ if executable('rg')
     let g:rg_derive_root='true'
 endif
 
+if exists('g:started_by_firenvim') && g:started_by_firenvim
+    " general options
+    set laststatus=0 nonumber noruler noshowcmd
+
+    augroup firenvim
+        autocmd!
+        autocmd BufEnter *.txt setlocal filetype=markdown.pandoc
+    augroup END
+endif
+
 " use this bin file on prettier format
 let g:prettier#exec_cmd_path = '~/.vim/bundle/vim-prettier/node_modules/.bin/prettier'
 let g:prettier#autoformat = 0
@@ -103,14 +135,20 @@ let laoded_matchparen = 1
 let mapleader = " "
 
 " Initialize netrw with hidden dot files
-let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
+" let g:netrw_list_hide = '\(^\|\s\s\)\zs\.\S\+'
+
 " Start with the type of nodes listing
 let g:netrw_liststyle = 0
-let g:netrw_browse_split = 2
+let g:netrw_browse_split = 0
 let g:netrw_banner = 0
 let g:netrw_winsize = 25
-let g:netrw_localrmdir='rm -r'
+let g:netrw_localrmdir='mv ~/.local/share/Trash'
 
+let g:UltiSnipsExpandTrigger='<C-S>'
+let g:UltiSnipsJumpForwardTrigger='<C-K>'
+let g:UltiSnipsJumpBackwardTrigger='<C-J>'
+let g:UltiSnipsEdit='vertical'
+let g:UltiSnipsSnippetDirectories=['UltiSnips','snips']
 
 " For scrolling in autocompletion popup
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -144,11 +182,14 @@ nnoremap <leader>gh :diffget //3<CR>
 nnoremap <leader>gf :diffget //2<CR>
 
 nnoremap <leader>gc :Git commit<CR>
+nnoremap <leader>gl :Gclog<CR>
 nnoremap <leader>gcn :Git commit --no-verify<CR>
 nnoremap <leader>gb :Git branches<CR>
 nnoremap <leader>ga :Git fetch --all<CR>
 nnoremap <leader>grum :Git rebase upstream/master<CR>
 nnoremap <leader>grom :Git rebase origin/master<CR>
+nnoremap <leader>gfrum :Git fetch --all<CR> :Git rebase upstream --interactive master<CR>
+nnoremap <leader>gfrom :Git fetch --all<CR> :Git rebase origin --interactive master<CR>
 nnoremap <leader>grs :Git reset --soft HEAD~1<CR>
 nnoremap <leader>grh :Git reset --hard HEAD~1<CR>
 nnoremap <leader>ghw :h <C-R>=expand("<cword>")<CR><CR>
@@ -210,15 +251,18 @@ nmap <Leader>tu <Plug>BujoChecknormal
 nmap <Leader>th <Plug>BujoAddnormal
 let g:bujo#todo_file_path = $HOME . "/.cache/bujo"
 
-nnoremap <Leader>ww ofunction wait(ms: number): Promise<void> {<CR>return new Promise(res => setTimeout(res, ms));<CR>}<esc>k=i{<CR>
+nnoremap <Leader>wf ofunction wait(ms: number): Promise<void> {<CR>return new Promise(res => setTimeout(res, ms));<CR>}<esc>k=i{<CR>
 
 "A react native component boilerplate with StyleSheet object - wow
-nnoremap <leader>rnc iimport * as React from 'react';<CR>import {View, Text, StyleSheet} from 'react-native';<CR><CR>export interface FooProps {}<CR><CR>export const foo = ({}: FooProps) => {<CR><Tab>return (<CR><View style={styles.container}><CR><Tab><Text>Hello World</Text><CR><BS></View><CR>)<CR><BS><BS>}<CR><CR>const styles = StyleSheet.create({<CR>container: { flex: 1}<CR>});<esc>
+nnoremap <leader>rnc iimport * as React from 'react';<CR>import {View, Text, StyleSheet} from 'react-native';<CR><CR>export interface Props {}<CR><CR>export const foo = ({}: Props) => {<CR><Tab>return (<CR><View style={styles.container}><CR><Tab><Text>Hello World</Text><CR><BS></View><CR>)<CR><BS><BS>}<CR><CR>const styles = StyleSheet.create({<CR>container: { flex: 1}<CR>});<esc>/foo<CR>
 
 " Vim with me
 nnoremap <leader>vwm :call ColorMyPencils()<CR>
+nnoremap <leader>tbg :call SetTransparentBg()<CR>
 
 inoremap <C-c> <esc>e
+nnoremap <leader>w :w<CR>
+nnoremap gb :buffers<CR>:buffer<Space>
 
 "for escaping from the terminal and going one buffer back
 tnoremap <leader>q <C-\><C-n> <C-o>
@@ -263,6 +307,8 @@ augroup start_up
     autocmd!
     autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue PrettierAsync
     autocmd BufEnter,BufWinEnter,TabEnter *.rs :lua require'lsp_extensions'.inlay_hints{}
+    " autocmd BufEnter *.hs :Ghcid
+    " autocmd BufLeave *.hs :GhcidKill
 augroup END
 
 augroup no_numbers
