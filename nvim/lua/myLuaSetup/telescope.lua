@@ -25,8 +25,15 @@ require('telescope').setup {
         fzy_native = {
             override_generic_sorter = false,
             override_file_sorter = true,
-        }
+        },
+        -- project = {
+        --     base_dirs = {
+        --         {path = '~/Workspace', max_depth = 2}
+        --     },
+        --     hidden_files = true
+        -- }
     }
 }
 
-require('telescope').load_extension('fzy_native')
+require('telescope').load_extension('fzf')
+-- require('telescope').load_extension('project')

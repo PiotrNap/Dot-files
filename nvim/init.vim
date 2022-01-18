@@ -49,11 +49,12 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-vinegar'
 " Plug 'tpenguinltg/vim-closing-brackets'
 
-" telescope requirements...
-Plug 'nvim-lua/popup.nvim'
-Plug 'nvim-lua/plenary.nvim'
+" telescope
 Plug 'nvim-telescope/telescope.nvim'
-Plug 'nvim-telescope/telescope-fzy-native.nvim'
+Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+" Plug 'nvim-telescope/telescope-project.nvim'
+Plug 'BurntSushi/ripgrep'
+Plug 'nvim-lua/plenary.nvim'
 
 " color scheme
 Plug 'Lokaltog/vim-monotone'
@@ -187,12 +188,16 @@ nnoremap <leader>grh :Git reset --hard HEAD~1<CR>
 nnoremap <leader>ghw :h <C-R>=expand("<cword>")<CR><CR>
 
 " telescope-nvim
-nnoremap <leader>ps :lua require('telescope.builtin').grep_string({ search = vim.fn.input("Grep For > ")})<CR>
-nnoremap <leader>pw :lua require('telescope.builtin').grep_string { search = vim.fn.expand("<cword>") }<CR>
-nnoremap <leader>pb :lua require('telescope.builtin').buffers()<CR>
-nnoremap <C-p> :lua require('telescope.builtin').git_files()<CR>
-nnoremap <Leader>pf :lua require('telescope.builtin').find_files()<CR>
-nnoremap <leader>vh :lua require('telescope.builtin').help_tags()<CR>
+nnoremap <Leader>ff :lua require('telescope.builtin').find_files()<CR>
+nnoremap <Leader>fb :lua require('telescope.builtin').buffers()<CR>
+nnoremap <Leader>fl :lua require('telescope.builtin').live_grep()<CR>
+nnoremap <leader>fh :lua require('telescope.builtin').help_tags()<CR>
+nnoremap <leader>fgc :lua require('telescope.builtin').git_commits()<CR>
+nnoremap <leader>fgb :lua require('telescope.builtin').git_branches()<CR>
+nnoremap <leader>fgs :lua require('telescope.builtin').git_status()<CR>
+
+" telescope-project
+" nnoremap <leader>fp :lua require('telescope').extensions.project.project{}<CR>
 
 nnoremap <leader>bs /<C-R>=escape(expand("<cWORD>"), "/")<CR><CR>
 nnoremap <leader>h :wincmd h<CR>
@@ -202,7 +207,6 @@ nnoremap <leader>l :wincmd l<CR>
 nnoremap <leader>u :UndotreeShow<CR>
 nnoremap <leader>pv :Sex!<CR>
 nnoremap <Leader><CR> :so ~/.config/nvim/init.vim<CR>
-nnoremap <Leader>f :lua vim.lsp.buf.formatting()<CR>
 nnoremap <Leader>- :vertical resize -5<CR>
 nnoremap <Leader>rp :resize 100<CR>
 nnoremap <Leader>ee oif err != nil {<CR>log.Fatalf("%+v\n", err)<CR>}<CR><esc>kkI<esc>
