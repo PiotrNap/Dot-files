@@ -3,6 +3,8 @@ local on_attach = require('myLuaSetup.on_attach')
 local set_lsp_config = require('myLuaSetup.utils')
 local util = require('lspconfig.util')
 
+vim.lsp.set_log_level('debug')
+
 USER = vim.fn.expand('$USER')
 
 -- local sumneko_root_path = '/home/' .. USER .. '/.config/nvim/lua-language-server'
@@ -71,14 +73,17 @@ lsp_config.jsonls.setup({
   end
 })
 
-lsp_config.hls.setup{}
+lsp_config.hls.setup({
+    on_attach = function(client)
+        vim.api.nvim_buf_set_keymap(0, "n"," le", "<cmd>lua vim.diagnostic.open_float()<cr>", {noremap = true})
+        vim.api.nvim_buf_set_keymap(0, "n"," ne", "<cmd>lua vim.diagnostic.goto_next()<cr>", {noremap = true})
+        vim.api.nvim_buf_set_keymap(0, "n"," pe", "<cmd>lua vim.diagnostic.goto_prev()<cr>", {noremap = true})
 
--- lsp_config.hls.setup({
---   on_attach = function(client)
---     client.resolved_capabilities.document_formatting = false
---     client.single_file_support = true
---     client.root_dir = util.root_pattern('*.hs')
---     root_dir = util.root_pattern('*.hs')
---     on_attach(client)
---   end
--- })
+        settings = {
+            haskell = {
+                formattingProvider = 'stylish-haskell'
+            }
+        }
+        on_attach(client)
+    end
+})

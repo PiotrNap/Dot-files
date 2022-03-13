@@ -60,7 +60,7 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'Lokaltog/vim-monotone'
 
 " Haskell / GHCi
-Plug 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim' }
+" Plug 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim' }
 
 call plug#end()
 
@@ -154,7 +154,6 @@ nnoremap <leader>vrr :lua vim.lsp.buf.references()<CR>
 nnoremap <leader>vrn :lua vim.lsp.buf.rename()<CR>
 nnoremap <leader>vh :lua vim.lsp.buf.hover()<CR>
 nnoremap <leader>vca :lua vim.lsp.buf.code_action()<CR>
-nnoremap <leader>vsd :lua vim.lsp.show_line_diagnostics(); vim.lsp.show_line_diagnostics()<CR>
 nnoremap <leader>vf :lua vim.lsp.buf.formatting()<CR>
 
 nnoremap <leader>cP :lua require("contextprint").add_statement()<CR>
@@ -216,6 +215,7 @@ vnoremap K :m '<-2<CR>gv=gv
 nnoremap <Leader>s :up<CR>
 nnoremap <leader>x :x<CR>
 nnoremap <leader>q :q<CR>
+nnoremap <leader>wq :wq<CR>
 nnoremap <leader>cpf :let @" = expand("%")<CR>
 
 " greatest remap ever
@@ -260,8 +260,8 @@ inoremap <C-c> <esc>e
 nnoremap <leader>w :w<CR>
 nnoremap gb :buffers<CR>:buffer<Space>
 
-"for escaping from the terminal and going one buffer back
-tnoremap <leader>q <C-\><C-n> <C-o>
+"for escaping from the terminal
+tnoremap <leader>q <C-\><C-n>
 
 "for entering the terminal
 nnoremap <leader>tr :terminal<CR> i
@@ -294,14 +294,10 @@ augroup highlight_yank
     autocmd TextYankPost = silent! lua require'vim.highlight'.on_yank({timeout = 40)}
 augroup END
 
-" augroup completion_nvim
-"     autocmd!
-"     autocmd BufEnter * lua require'completion'.on_attach()
-" augroup END
-
 augroup start_up
     autocmd!
     autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue PrettierAsync
+    autocmd BufWritePre *.hs :Format
     " autocmd BufEnter,BufWinEnter,TabEnter *.rs :lua require'lsp_extensions'.inlay_hints{}
     " autocmd BufEnter *.hs :Ghcid
     " autocmd BufLeave *.hs :GhcidKill
