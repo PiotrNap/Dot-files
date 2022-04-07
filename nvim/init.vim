@@ -26,6 +26,7 @@ call plug#begin('~/.vim/plugged')
 
 " Neovim lsp Plugins
 Plug 'neovim/nvim-lspconfig'
+"" Needed for auto-completion
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
@@ -43,16 +44,13 @@ Plug 'mbbill/undotree'
 Plug 'tweekmonster/startuptime.vim'
 Plug 'romainl/vim-cool'
 Plug 'prettier/vim-prettier'
-" Plug 'shadmansaleh/lualine.nvim'
 
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-vinegar'
-" Plug 'tpenguinltg/vim-closing-brackets'
 
 " telescope
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
-" Plug 'nvim-telescope/telescope-project.nvim'
 Plug 'BurntSushi/ripgrep'
 Plug 'nvim-lua/plenary.nvim'
 
@@ -123,6 +121,7 @@ endif
 let g:prettier#exec_cmd_path = '~/.vim/bundle/vim-prettier/node_modules/.bin/prettier'
 let g:prettier#autoformat = 0
 let g:prettier#config#tab_width = 2
+let g:prettier#config#semi = 'false'
 
 let laoded_matchparen = 1
 let mapleader = " "
@@ -155,6 +154,11 @@ nnoremap <leader>vrn :lua vim.lsp.buf.rename()<CR>
 nnoremap <leader>vh :lua vim.lsp.buf.hover()<CR>
 nnoremap <leader>vca :lua vim.lsp.buf.code_action()<CR>
 nnoremap <leader>vf :lua vim.lsp.buf.formatting()<CR>
+
+" diagnostic lsp commands
+nnoremap <leader>el :lua vim.diagnostic.open_float()<CR>
+nnoremap <leader>ep :lua vim.diagnostic.goto_prev()<CR>
+nnoremap <leader>en :lua vim.diagnostic.goto_next()<CR>
 
 nnoremap <leader>cP :lua require("contextprint").add_statement()<CR>
 nnoremap <leader>cp :lua require("contextprint").add_statement(true)<CR>
@@ -208,7 +212,6 @@ nnoremap <leader>pv :Sex!<CR>
 nnoremap <Leader><CR> :so ~/.config/nvim/init.vim<CR>
 nnoremap <Leader>- :vertical resize -5<CR>
 nnoremap <Leader>rp :resize 100<CR>
-nnoremap <Leader>ee oif err != nil {<CR>log.Fatalf("%+v\n", err)<CR>}<CR><esc>kkI<esc>
 nnoremap <Leader>cpu a%" PRIu64 "<esc>
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
@@ -256,6 +259,7 @@ nnoremap <leader>rnc iimport * as React from 'react';<CR>import {View, Text, Sty
 nnoremap <leader>vwm :call ColorMyPencils()<CR>
 nnoremap <leader>tbg :call SetTransparentBg()<CR>
 
+inoremap <silent> <esc> <C-O>:stopinsert<CR>
 inoremap <C-c> <esc>e
 nnoremap <leader>w :w<CR>
 nnoremap gb :buffers<CR>:buffer<Space>
