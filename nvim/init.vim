@@ -2,13 +2,13 @@ filetype plugin indent on
 syntax on
 
 set guicursor=  
+set guifont=Hack
 set hlsearch hidden noerrorbells expandtab smartindent nowrap
 set ignorecase smarttab smartcase noswapfile nobackup undofile incsearch noshowmode
 set tabstop=4 softtabstop=4 shiftwidth=4 scrolloff=8 scl=yes guicursor=
 set undodir=~/.vim/undodir
 set cot=menuone,noinsert,noselect
 set encoding=utf-8
-set background=dark
 
 " Give more space for displaying messages.
 set cmdheight=2
@@ -57,40 +57,13 @@ Plug 'nvim-lua/plenary.nvim'
 " color scheme
 Plug 'Lokaltog/vim-monotone'
 
-" Haskell / GHCi
-" Plug 'ndmitchell/ghcid', { 'rtp': 'plugins/nvim' }
-
 call plug#end()
 
 lua require('myLuaSetup')
 
-fun! ColorMyPencils()
-   color monotone
-   if exists('+termguicolors')
-        let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-        let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-    endif
-
-  highlight ColorColumn ctermbg=0 guibg=grey
-  highlight Normal guibg=000000
-  highlight LineNr guifg=#5eacd3
-  highlight netrwDir guifg=#5eacd3
-  highlight qfFileName guifg=#aed75f
-
-  " make background transparent
-  highlight Normal ctermbg=NONE guibg=NONE
-endfun
-call ColorMyPencils()
-
-" fun! SetTransparentBg()
-"    if exists('+termguicolors')
-"         let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-"         let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-"     endif
-
-"     color monotone
-" endfun
-" call SetTransparentBg()
+color monotone
+" make background transparent
+highlight Normal ctermbg=NONE guibg=NONE
 
 " yank text into system (and host?) clipboard
 fun! Yank(text) 
@@ -101,7 +74,6 @@ fun! Yank(text)
         call writefile([escape], '/dev/tty', 'b')
     endif
 endfun
-
 
 if executable('rg')
     let g:rg_derive_root='true'
@@ -215,7 +187,7 @@ nnoremap <Leader>rp :resize 100<CR>
 nnoremap <Leader>cpu a%" PRIu64 "<esc>
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
-nnoremap <Leader>s :up<CR>
+" nnoremap <Leader>s :up<CR>
 nnoremap <leader>x :x<CR>
 nnoremap <leader>q :q<CR>
 nnoremap <leader>wq :wq<CR>
@@ -255,13 +227,17 @@ nnoremap <Leader>wf ofunction wait(ms: number): Promise<void> {<CR>return new Pr
 "A react native component boilerplate with StyleSheet object - wow
 nnoremap <leader>rnc iimport * as React from 'react';<CR>import {View, Text, StyleSheet} from 'react-native';<CR><CR>export interface Props {}<CR><CR>export const foo = ({}: Props) => {<CR><Tab>return (<CR><View style={styles.container}><CR><Tab><Text>Hello World</Text><CR><BS></View><CR>)<CR><BS><BS>}<CR><CR>const styles = StyleSheet.create({<CR>container: { flex: 1}<CR>});<esc>/foo<CR>
 
+" after so many key strokes....
+nnoremap <leader>cl iconsole.log('here')<ESC>i
+nnoremap <leader>ce iconsole.error('error')<ESC>i
+
 " Vim with me
 nnoremap <leader>vwm :call ColorMyPencils()<CR>
 nnoremap <leader>tbg :call SetTransparentBg()<CR>
 
 inoremap <silent> <esc> <C-O>:stopinsert<CR>
 inoremap <C-c> <esc>e
-nnoremap <leader>w :w<CR>
+nnoremap <leader>s :w<CR>
 nnoremap gb :buffers<CR>:buffer<Space>
 
 "for escaping from the terminal
@@ -293,15 +269,27 @@ endfun
 
 command! Format execute 'lua vim.lsp.buf.formatting()'
 
-augroup highlight_yank
-    autocmd!
-    autocmd TextYankPost = silent! lua require'vim.highlight'.on_yank({timeout = 40)}
-augroup END
+function! SetAllGroupsSetting()
+    let groups = [
+    \   'Normal', 'Comment', 'Constant', 'String', 'Character', 'Number', 'Boolean',
+    \   'Float', 'Identifier', 'Function', 'Statement', 'Conditional', 'Repeat',
+    \   'Label', 'Operator', 'Keyword', 'Exception', 'Type', 'StorageClass', 'Structure',
+    \   'PreProc', 'Define', 'Include', 'Special', 'SpecialChar', 'Tag', 'Delimiter',
+    \   'SpecialComment', 'Debug', 'Error', 'Todo'
+    \ ]
+    for group in groups
+        execute 'highlight' group 'cterm=NONE gui=NONE'
+    endfor
+endfunction
+
 
 augroup start_up
     autocmd!
+    autocmd ColorScheme * call SetAllGroupsSetting()
+    autocmd BufEnter * call SetAllGroupsSetting()
     autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue PrettierAsync
     autocmd BufWritePre *.hs :Format
+    autocmd TextYankPost = silent! lua require'vim.highlight'.on_yank({timeout = 40)}
     " autocmd BufEnter,BufWinEnter,TabEnter *.rs :lua require'lsp_extensions'.inlay_hints{}
     " autocmd BufEnter *.hs :Ghcid
     " autocmd BufLeave *.hs :GhcidKill
