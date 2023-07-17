@@ -49,10 +49,10 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-vinegar'
 
 " telescope
-Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.1' }
+Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'BurntSushi/ripgrep'
-Plug 'nvim-lua/plenary.nvim'
 
 " color scheme
 Plug 'Lokaltog/vim-monotone'
@@ -77,16 +77,6 @@ endfun
 
 if executable('rg')
     let g:rg_derive_root='true'
-endif
-
-if exists('g:started_by_firenvim') && g:started_by_firenvim
-    " general options
-    set laststatus=0 nonumber noruler noshowcmd
-
-    augroup firenvim
-        autocmd!
-        autocmd BufEnter *.txt setlocal filetype=markdown.pandoc
-    augroup END
 endif
 
 " use this bin file on prettier format
@@ -114,6 +104,18 @@ let g:UltiSnipsJumpBackwardTrigger='<C-J>'
 let g:UltiSnipsEdit='vertical'
 let g:UltiSnipsSnippetDirectories=['UltiSnips','snips']
 
+function! ToggleCommentAutoInsert()
+    if &fo =~ 'r' && &fo =~ 'o'
+        setlocal formatoptions-=cro
+        echo "Auto comment insertion: OFF"
+    else
+        setlocal formatoptions+=cro
+        echo "Auto comment insertion: ON"
+    endif
+endfunction
+
+nnoremap <leader>cai :call ToggleCommentAutoInsert()<CR>
+
 " For scrolling in autocompletion popup
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
@@ -132,9 +134,6 @@ nnoremap <leader>el :lua vim.diagnostic.open_float()<CR>
 nnoremap <leader>ep :lua vim.diagnostic.goto_prev()<CR>
 nnoremap <leader>en :lua vim.diagnostic.goto_next()<CR>
 
-nnoremap <leader>cP :lua require("contextprint").add_statement()<CR>
-nnoremap <leader>cp :lua require("contextprint").add_statement(true)<CR>
-
 fun! GotoWindow(id)
     call win_gotoid(a:id)
     MaximizerToggle
@@ -151,6 +150,7 @@ nnoremap <leader>gf :diffget //2<CR>
 
 nnoremap <leader>gc :Git commit<CR>
 nnoremap <leader>gl :Gclog<CR>
+nnoremap <leader>ge :Gedit<CR>
 nnoremap <leader>gcn :Git commit --no-verify<CR>
 nnoremap <leader>gb :Git branches<CR>
 nnoremap <leader>ga :Git fetch --all<CR>
@@ -187,7 +187,6 @@ nnoremap <Leader>rp :resize 100<CR>
 nnoremap <Leader>cpu a%" PRIu64 "<esc>
 vnoremap J :m '>+1<CR>gv=gv
 vnoremap K :m '<-2<CR>gv=gv
-" nnoremap <Leader>s :up<CR>
 nnoremap <leader>x :x<CR>
 nnoremap <leader>q :q<CR>
 nnoremap <leader>wq :wq<CR>
@@ -230,6 +229,7 @@ nnoremap <leader>rnc iimport * as React from 'react';<CR>import {View, Text, Sty
 " after so many key strokes....
 nnoremap <leader>cl iconsole.log('here')<ESC>i
 nnoremap <leader>ce iconsole.error('error')<ESC>i
+nnoremap <leader>te iif() throw new Error(`<ESC>F)i
 
 " Vim with me
 nnoremap <leader>vwm :call ColorMyPencils()<CR>
@@ -237,7 +237,8 @@ nnoremap <leader>tbg :call SetTransparentBg()<CR>
 
 inoremap <silent> <esc> <C-O>:stopinsert<CR>
 inoremap <C-c> <esc>e
-nnoremap <leader>s :w<CR>
+nnoremap <leader>s :up<CR>
+nnoremap <leader>w :write<CR>
 nnoremap gb :buffers<CR>:buffer<Space>
 
 "for escaping from the terminal
@@ -282,15 +283,14 @@ function! SetAllGroupsSetting()
     endfor
 endfunction
 
-
 augroup start_up
     autocmd!
     autocmd ColorScheme * call SetAllGroupsSetting()
     autocmd BufEnter * call SetAllGroupsSetting()
     autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue PrettierAsync
-    autocmd BufWritePre *.hs :Format
     autocmd TextYankPost = silent! lua require'vim.highlight'.on_yank({timeout = 40)}
-    " autocmd BufEnter,BufWinEnter,TabEnter *.rs :lua require'lsp_extensions'.inlay_hints{}
+    autocmd BufEnter,BufWinEnter,TabEnter *.rs :lua require'lsp_extensions'.inlay_hints{}
+    " autocmd BufWritePre *.hs :Format
     " autocmd BufEnter *.hs :Ghcid
     " autocmd BufLeave *.hs :GhcidKill
 augroup END

@@ -52,17 +52,23 @@ lsp_config.jsonls.setup({
   end
 })
 
+lsp_config.jsonls.setup({
+  on_attach = function(client)
+    client.server_capabilities.document_formatting = false
+    on_attach(client)
+  end
+})
+
 lsp_config.hls.setup({
     on_attach = function(client)
         vim.api.nvim_buf_set_keymap(0, "n"," le", "<cmd>lua vim.diagnostic.open_float()<cr>", {noremap = true})
         vim.api.nvim_buf_set_keymap(0, "n"," ne", "<cmd>lua vim.diagnostic.goto_next()<cr>", {noremap = true})
         vim.api.nvim_buf_set_keymap(0, "n"," pe", "<cmd>lua vim.diagnostic.goto_prev()<cr>", {noremap = true})
-
-        settings = {
-            haskell = {
-                formattingProvider = 'stylish-haskell'
-            }
-        }
         on_attach(client)
-    end
+    end,
+    settings = {
+        haskell = {
+            formattingProvider = 'stylish-haskell'
+        }
+    }
 })
