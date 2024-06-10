@@ -1,26 +1,25 @@
 filetype plugin indent on
 syntax on
 
-set guicursor=  
-set guifont=Hack
 set hlsearch hidden noerrorbells expandtab smartindent nowrap
 set ignorecase smarttab smartcase noswapfile nobackup undofile incsearch noshowmode
-set tabstop=4 softtabstop=4 shiftwidth=4 scrolloff=8 scl=yes guicursor=
+set tabstop=4 softtabstop=4 shiftwidth=4 scrolloff=8 scl=yes
 set undodir=~/.vim/undodir
 set cot=menuone,noinsert,noselect
 set encoding=utf-8
+setlocal formatoptions-=cro
 
 " Give more space for displaying messages.
 set cmdheight=2
 
 " Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
 " delays and poor user experience.
-set updatetime=50
+set updatetime=500
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
 
-set colorcolumn=80
+set colorcolumn=90
 
 call plug#begin('~/.vim/plugged')
 
@@ -49,7 +48,7 @@ Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-vinegar'
 
 " telescope
-Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.1' }
+Plug 'nvim-telescope/telescope.nvim', {'tag': '0.1.4'}
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'BurntSushi/ripgrep'
@@ -65,16 +64,6 @@ color monotone
 " make background transparent
 highlight Normal ctermbg=NONE guibg=NONE
 
-" yank text into system (and host?) clipboard
-fun! Yank(text) 
-    let escape = system("term_copy",a:text)
-    if v:shell_error
-        echoerr escape
-    else
-        call writefile([escape], '/dev/tty', 'b')
-    endif
-endfun
-
 if executable('rg')
     let g:rg_derive_root='true'
 endif
@@ -82,6 +71,7 @@ endif
 " use this bin file on prettier format
 let g:prettier#exec_cmd_path = '~/.vim/bundle/vim-prettier/node_modules/.bin/prettier'
 let g:prettier#autoformat = 0
+let g:prettier#config#print_width = 90
 let g:prettier#config#tab_width = 2
 let g:prettier#config#semi = 'false'
 
@@ -114,7 +104,7 @@ function! ToggleCommentAutoInsert()
     endif
 endfunction
 
-nnoremap <leader>cai :call ToggleCommentAutoInsert()<CR>
+nnoremap <leader>aci :call ToggleCommentAutoInsert()<CR>
 
 " For scrolling in autocompletion popup
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -141,7 +131,6 @@ endfun
 
 nnoremap <leader>m :MaximizerToggle!<CR>
 
-nnoremap <leader>y y:call Yank(@0)
 
 "vim-fugitive shortcuts
 nnoremap <leader>gs :G<CR>
@@ -190,12 +179,13 @@ vnoremap K :m '<-2<CR>gv=gv
 nnoremap <leader>x :x<CR>
 nnoremap <leader>q :q<CR>
 nnoremap <leader>wq :wq<CR>
-nnoremap <leader>cpf :let @" = expand("%")<CR>
+
+nnoremap <leader>cfp :let @+=expand('%:p')<CR>
+
 
 " greatest remap ever
 vnoremap <leader>p "_dP
 nnoremap <leader>y "+y
-vnoremap <leader>y "+y
 nnoremap <leader>V v$
 " go to next occurence and center the cursor
 nnoremap n nzzzv
@@ -227,7 +217,8 @@ nnoremap <Leader>wf ofunction wait(ms: number): Promise<void> {<CR>return new Pr
 nnoremap <leader>rnc iimport * as React from 'react';<CR>import {View, Text, StyleSheet} from 'react-native';<CR><CR>export interface Props {}<CR><CR>export const foo = ({}: Props) => {<CR><Tab>return (<CR><View style={styles.container}><CR><Tab><Text>Hello World</Text><CR><BS></View><CR>)<CR><BS><BS>}<CR><CR>const styles = StyleSheet.create({<CR>container: { flex: 1}<CR>});<esc>/foo<CR>
 
 " after so many key strokes....
-nnoremap <leader>cl iconsole.log('here')<ESC>i
+nnoremap <leader>cl iconsole.log('')<ESC>hi
+nnoremap <leader>clh iconsole.log('here')<ESC>i
 nnoremap <leader>ce iconsole.error('error')<ESC>i
 nnoremap <leader>te iif() throw new Error(`<ESC>F)i
 
@@ -254,6 +245,15 @@ let g:completion_matching_strategy_list = ['exact', 'substring', 'fuzzy']
 let g:completion_matching_smart_case = 1
 let g:completion_trigger_on_delete = 1
 let g:diagnostic_enable_virtual_text = 1
+
+"functions for custom React useState's
+fun! InsertUseState()
+    " This will insert the custom useState at the current cursor position
+    execute "normal! iconst [isLoading, setIsLoading] =  React.useState<boolean>(false)\<Esc>"
+endfunction
+
+" mappings for custom React useState's function
+nnoremap <Leader>usl :call InsertUseState()<CR>
 
 fun! EmptyRegisters()
     let regs=split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/-"', '\zs')
@@ -287,12 +287,9 @@ augroup start_up
     autocmd!
     autocmd ColorScheme * call SetAllGroupsSetting()
     autocmd BufEnter * call SetAllGroupsSetting()
-    autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue PrettierAsync
+    autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.json,*.md, PrettierAsync
     autocmd TextYankPost = silent! lua require'vim.highlight'.on_yank({timeout = 40)}
     autocmd BufEnter,BufWinEnter,TabEnter *.rs :lua require'lsp_extensions'.inlay_hints{}
-    " autocmd BufWritePre *.hs :Format
-    " autocmd BufEnter *.hs :Ghcid
-    " autocmd BufLeave *.hs :GhcidKill
 augroup END
 
 augroup no_numbers

@@ -1,5 +1,8 @@
+file:///home/bob/Workspace/bonfire
+file:///home/bob/Desktop
 file:///home/bob/Documents
 file:///home/bob/Music
 file:///home/bob/Pictures
 file:///home/bob/Videos
 file:///home/bob/Downloads
+sftp://ops@couchdb1-vmr4ud.demu.pro/home/ops ops on couchdb1-vmr4ud.demu.pro
