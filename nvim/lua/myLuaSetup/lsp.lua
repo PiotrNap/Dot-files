@@ -1,87 +1,45 @@
-local lsp_config = require('lspconfig')
-local on_attach = require('myLuaSetup.on_attach')
-local set_lsp_config = require('myLuaSetup.utils')
-local util = require('lspconfig.util')
+local lsp_config = require("lspconfig")
+local on_attach = require("myLuaSetup.on_attach")
+local set_lsp_config = require("myLuaSetup.utils")
+local util = require("lspconfig.util")
 
-USER = vim.fn.expand('$USER')
+USER = vim.fn.expand("$USER")
 
--- lsp_config.eslint.setup({
---   on_attach = function(client)
---     client.server_capabilities.document_formatting = false
---     on_attach(client)
---   end
--- })
+local servers = {
+  'solidity_ls', 'gopls', 'svelte', 'pyright', 'vimls',
+  'cssls', 'html', 'jsonls', 'yamlls', 'markdown_oxide', 'ts_ls'
+}
 
-lsp_config.vimls.setup({
-  on_attach = function(client)
-    client.server_capabilities.document_formatting = false
-    on_attach(client)
-  end
-})
+for _, name in ipairs(servers) do
+	local opts = {
+		on_attach = function(client, bufnr)
+			-- fully disable LSP-driven formatting from this server
+			client.server_capabilities.documentFormattingProvider = false
+			client.server_capabilities.documentRangeFormattingProvider = false
+			if on_attach then
+				on_attach(client, bufnr)
+			end
+		end,
+	}
 
-lsp_config.cssls.setup({
-  on_attach = function(client)
-    client.server_capabilities.document_formatting = false
-    on_attach(client)
-  end
-})
+	-- extra per-server switches to kill built-in formatters
+	if name == "ts_ls" then
+		opts.settings = {
+			javascript = { format = { enable = false } },
+			typescript = { format = { enable = false } },
+		}
+	elseif name == "jsonls" then
+		opts.settings = { json = { format = { enable = false } } }
+	elseif name == "html" then
+		opts.init_options = { provideFormatter = false }
+	elseif name == "cssls" then
+		opts.settings = { css = { validate = true }, scss = { validate = true }, less = { validate = true } }
+		-- cssls doesn’t expose a clean switch; capability disable above is enough
+	end
 
-lsp_config.html.setup({
-  on_attach = function(client)
-    client.server_capabilities.document_formatting = false
-    on_attach(client)
-  end
-})
-
-lsp_config.jsonls.setup({
-  on_attach = function(client)
-    client.server_capabilities.document_formatting = false
-    on_attach(client)
-  end
-})
-
--- lsp_config.heliosls.setup({
---   on_attach = function(client)
---     client.server_capabilities.document_formatting = false
---     on_attach(client)
---   end
--- })
-
--- lsp_config.hls.setup({
---     on_attach = function(client)
---         vim.api.nvim_buf_set_keymap(0, "n"," le", "<cmd>lua vim.diagnostic.open_float()<cr>", {noremap = true})
---         vim.api.nvim_buf_set_keymap(0, "n"," ne", "<cmd>lua vim.diagnostic.goto_next()<cr>", {noremap = true})
---         vim.api.nvim_buf_set_keymap(0, "n"," pe", "<cmd>lua vim.diagnostic.goto_prev()<cr>", {noremap = true})
---         on_attach(client)
---     end,
---     settings = {
---         haskell = {
---             formattingProvider = 'stylish-haskell'
---         }
---     }
--- })
-
-lsp_config.tsserver.setup({
-  cmd = { "/home/bob/.nvm/versions/node/v18.17.0/bin/tsserver", "--stdio" },
-  on_attach = function(client)
-    if client.config.flags then
-      client.config.flags.allow_incremental_sync = true
-    end
-    client.server_capabilities.document_formatting = false
-    single_file_support = false
-    set_lsp_config(client)
-  end,
-})
-
-
--- lsp_config.denols.setup({
---   on_attach = function(client)
---     client.server_capabilities.document_formatting = false
---     on_attach(client)
---   end,
---   root_dir = util.root_pattern("deno.json", "deno.jsonc"),
---   settings = {
---       ["deno.lint"] = true,
---   }
--- })
-
+	if lsp_config[name] then
+		lsp_config[name].setup(opts)
+	else
+		vim.notify("No LSP config found for: " .. name, vim.log.levels.WARN)
+	end
+end

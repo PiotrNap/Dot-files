@@ -1,4 +1,3 @@
-local actions = require('telescope.actions')
 require('telescope').setup {
     defaults = {
         file_sorter = require('telescope.sorters').get_fzy_sorter,
@@ -12,14 +11,26 @@ require('telescope').setup {
         mappings = {
             i = {
                 ["<C-x>"] = false,
-                ["<C-q>"] = actions.send_to_qflist,
-                ["<esc>"] = actions.close
+                ["<C-q>"] = "send_to_qflist",
+                ["<esc>"] = "close"
             },
             n = {
-                ["<Down>"] = actions.move_selection_next,
-                ["<Up>"] = actions.move_selection_previous,
+                ["<Down>"] = "move_selection_next",
+                ["<Up>"] = "move_selection_previous",
              }
-        }
+        },
+
+        file_ignore_patterns = {
+            "node_modules/.*",
+            "%.env",
+            "yarn.lock",
+            "pnpm%-lock.yaml",
+            "package%-lock.json",
+            "lazy%-lock.json",
+            "init.sql",
+            "target/.*",
+            ".git/.*",
+        },
     },
     extensions = {
         fzy_native = {

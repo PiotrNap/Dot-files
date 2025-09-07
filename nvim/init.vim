@@ -25,6 +25,8 @@ call plug#begin('~/.vim/plugged')
 
 " Neovim lsp Plugins
 Plug 'neovim/nvim-lspconfig'
+Plug 'stevearc/conform.nvim'
+
 "" Needed for auto-completion
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
@@ -42,14 +44,19 @@ Plug 'vim-utils/vim-man'
 Plug 'mbbill/undotree'
 Plug 'tweekmonster/startuptime.vim'
 Plug 'romainl/vim-cool'
-Plug 'prettier/vim-prettier'
+Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
+
+
+" svelte
+Plug 'evanleck/vim-svelte'
+Plug 'Shougo/context_filetype.vim'
 
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-vinegar'
 
 " telescope
-Plug 'nvim-telescope/telescope.nvim', {'tag': '0.1.4'}
 Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.8' }
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'BurntSushi/ripgrep'
 
@@ -155,7 +162,8 @@ nnoremap <leader>ghw :h <C-R>=expand("<cword>")<CR><CR>
 nnoremap <Leader>ff :lua require('telescope.builtin').find_files()<CR>
 nnoremap <Leader>fb :lua require('telescope.builtin').buffers()<CR>
 nnoremap <Leader>fl :lua require('telescope.builtin').live_grep()<CR>
-nnoremap <leader>fh :lua require('telescope.builtin').help_tags()<CR>
+nnoremap <Leader>fh :lua require('telescope.builtin').live_grep({ default_text = vim.fn.expand("<cword>")})<CR>
+nnoremap <leader>fp :lua require('telescope.builtin').help_tags()<CR>
 nnoremap <leader>fgc :lua require('telescope.builtin').git_commits()<CR>
 nnoremap <leader>fgb :lua require('telescope.builtin').git_branches()<CR>
 nnoremap <leader>fgs :lua require('telescope.builtin').git_status()<CR>
@@ -185,7 +193,7 @@ nnoremap <leader>cfp :let @+=expand('%:p')<CR>
 
 " greatest remap ever
 vnoremap <leader>p "_dP
-nnoremap <leader>y "+y
+vnoremap <leader>y "+y
 nnoremap <leader>V v$
 " go to next occurence and center the cursor
 nnoremap n nzzzv
@@ -218,9 +226,10 @@ nnoremap <leader>rnc iimport * as React from 'react';<CR>import {View, Text, Sty
 
 " after so many key strokes....
 nnoremap <leader>cl iconsole.log('')<ESC>hi
-nnoremap <leader>clh iconsole.log('here')<ESC>i
-nnoremap <leader>ce iconsole.error('error')<ESC>i
+nnoremap <leader>clh iconsole.log('here')<ESC>hi
+nnoremap <leader>ce iconsole.error('error')<ESC>hi
 nnoremap <leader>te iif() throw new Error(`<ESC>F)i
+nnoremap <leader>usil iconst [isLoading, setIsLoading]= useState<boolean>(false)<ESC>
 
 " Vim with me
 nnoremap <leader>vwm :call ColorMyPencils()<CR>
@@ -283,11 +292,29 @@ function! SetAllGroupsSetting()
     endfor
 endfunction
 
+if !exists('g:context_filetype#same_filetypes')
+  let g:context_filetype#filetypes = {}
+endif
+
+let g:context_filetype#filetypes.svelte =
+\ [
+\   {'filetype' : 'javascript', 'start' : '<script>', 'end' : '</script>'},
+\   {
+\     'filetype': 'typescript',
+\     'start': '<script\%( [^>]*\)\? \%(ts\|lang="\%(ts\|typescript\)"\)\%( [^>]*\)\?>',
+\     'end': '',
+\   },
+\   {'filetype' : 'css', 'start' : '<style \?.*>', 'end' : '</style>'},
+\ ]
+
+let g:ft = ''
+
 augroup start_up
     autocmd!
     autocmd ColorScheme * call SetAllGroupsSetting()
     autocmd BufEnter * call SetAllGroupsSetting()
-    autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.json,*.md, PrettierAsync
+    " autocmd BufWritePre *.js,*.jsx,*.ts,*.tsx,*.css,*.pcss,*.json,*.md,*.svelte,*.html, *.py PrettierAsync
+    " autocmd BufWritePre *.py :lua vim.lsp.buf.format()
     autocmd TextYankPost = silent! lua require'vim.highlight'.on_yank({timeout = 40)}
     autocmd BufEnter,BufWinEnter,TabEnter *.rs :lua require'lsp_extensions'.inlay_hints{}
 augroup END
