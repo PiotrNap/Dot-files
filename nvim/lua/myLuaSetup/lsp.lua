@@ -1,12 +1,11 @@
 local lsp_config = require("lspconfig")
 local on_attach = require("myLuaSetup.on_attach")
-local set_lsp_config = require("myLuaSetup.utils")
 local util = require("lspconfig.util")
 
-USER = vim.fn.expand("$USER")
+local set_lsp_config = require("myLuaSetup.utils")
 
 local servers = {
-  'solidity_ls', 'gopls', 'svelte', 'pyright', 'vimls',
+  'solidity_ls', 'gopls', 'svelte', 'pyright', 'vimls', 'biome',
   'cssls', 'html', 'jsonls', 'yamlls', 'markdown_oxide', 'ts_ls'
 }
 
@@ -35,6 +34,10 @@ for _, name in ipairs(servers) do
 	elseif name == "cssls" then
 		opts.settings = { css = { validate = true }, scss = { validate = true }, less = { validate = true } }
 		-- cssls doesn’t expose a clean switch; capability disable above is enough
+    elseif name == 'biome' then
+        opts.root_dir = util.root_pattern("biome.json", "biome.jsonc")
+        opts.single_file_support = false
+        -- optional: capabilities = require("cmp_nvim_lsp").default_capabilities(),
 	end
 
 	if lsp_config[name] then

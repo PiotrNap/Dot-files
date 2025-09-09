@@ -44,7 +44,6 @@ Plug 'vim-utils/vim-man'
 Plug 'mbbill/undotree'
 Plug 'tweekmonster/startuptime.vim'
 Plug 'romainl/vim-cool'
-Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production' }
 
 
 " svelte
@@ -74,13 +73,6 @@ highlight Normal ctermbg=NONE guibg=NONE
 if executable('rg')
     let g:rg_derive_root='true'
 endif
-
-" use this bin file on prettier format
-let g:prettier#exec_cmd_path = '~/.vim/bundle/vim-prettier/node_modules/.bin/prettier'
-let g:prettier#autoformat = 0
-let g:prettier#config#print_width = 90
-let g:prettier#config#tab_width = 2
-let g:prettier#config#semi = 'false'
 
 let laoded_matchparen = 1
 let mapleader = " "
